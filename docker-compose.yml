@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  podcastify-soap-service-db:
+    container_name: podcastify-soap-service-db
+    image: mysql:latest
+    hostname: podcastify-soap-service-db
+    ports:
+      - "3308:3306"
+    networks:
+      - podcastify-soap
+    env_file:
+      - .env
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  podcastify-soap-service-app:
+    container_name: podcastify-soap-service-app
+    build: .
+    hostname: podcastify-soap-service-app
+    env_file:
+      - .env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - podcastify-soap-service-db
+    volumes:
+      - ./src:/app/src
+    networks:
+      - podcastify-soap
+
+volumes:
+  mysql:
+    driver: local
+
+networks:
+  podcastify-soap:
