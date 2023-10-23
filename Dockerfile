@@ -14,4 +14,4 @@ COPY --from=build /app/target .
 
 EXPOSE 9000
 
-CMD java -cp podcastify-soap-service-jar-with-dependencies.jar main.Main
+CMD java -cp podcastify-soap-service-jar-with-dependencies.jar com.podcastify.main.Main

@@ -27,6 +27,12 @@
       <version>5.2.2</version>
     </dependency>
     <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.26</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat</artifactId>
       <version>7.0.91</version>
@@ -59,7 +65,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>main.Main</mainClass>
+              <mainClass>com.podcastify.main.Main</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -174,6 +180,15 @@
         </dependencies>
       </plugin>
     </plugins>
+    <resources>
+        <resource>
+            <directory>${project.basedir}</directory>
+            <includes>
+                <include>.env</include>
+            </includes>
+            <targetPath>${project.build.outputDirectory}</targetPath>
+        </resource>
+    </resources>
     <finalName>podcastify-soap-service</finalName>
   </build>
 
