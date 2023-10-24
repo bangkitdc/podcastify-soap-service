@@ -7,7 +7,8 @@ CREATE TABLE logs(
     description     varchar(255)    NOT NULL,
     IP              varchar(16)     NOT NULL,
     endpoint        varchar(255)    NOT NULL,
-    requested_at    timestamp       NOT NULL DEFAULT NOW()
+    requested_at    timestamp       NOT NULL DEFAULT NOW(),
+    from_service    varchar(255)    NOT NULL
 );
 
 CREATE TABLE statuses(
