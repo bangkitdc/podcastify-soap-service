@@ -13,4 +13,5 @@ public class LogModel {
     private String IP;
     private String endpoint;
     private Date timestamp;
+    private String fromService;
 }

@@ -17,11 +17,12 @@ public class LogRepository {
     }
 
     public void addLog(LogModel log) throws SQLException {
-        String query = "INSERT INTO logs (description, IP, endpoint) VALUES(?, ?, ?)";
+        String query = "INSERT INTO logs (description, IP, endpoint, from_service) VALUES(?, ?, ?, ?)";
         PreparedStatement stmt = this.conn.prepareStatement(query);
         stmt.setString(1, log.getDescription());
         stmt.setString(2, log.getIP());
         stmt.setString(3, log.getEndpoint());
+        stmt.setString(4, log.getFromService());
         stmt.execute();
         stmt.close();
         this.conn.commit();
