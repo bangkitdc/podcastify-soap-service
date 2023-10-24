@@ -19,10 +19,16 @@ public class PodcastServiceImpl implements PodcastService {
       String description = name + " is subscribing";
       MessageContext mc = wsContext.getMessageContext();
 
-      LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
+      try {
+         LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
 
-      // TODO: complete this implementation, current is just for logging purpose
+         // TODO: complete this implementation, current is just for logging purpose
 
-      return Response.HTTP_STATUS_ACCEPTED;
+         return Response.HTTP_STATUS_ACCEPTED;
+
+      } catch (Exception e) {
+         System.out.println("Security exception: " + e.getMessage());
+         return Response.HTTP_STATUS_UNAUTHORIZED;
+      }
    }
 }
