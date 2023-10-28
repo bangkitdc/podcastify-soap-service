@@ -32,6 +32,8 @@ public class Response {
             return Response.createResponse(Response.HTTP_STATUS_UNAUTHORIZED, e.getMessage());
         if (e instanceof SQLException)
             return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage());
+        if (e instanceof IllegalArgumentException)
+            return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage());
         else {
             String errMessage = e.getMessage() == null ? "internal server error" : e.getMessage();
             return Response.createResponse(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, errMessage);

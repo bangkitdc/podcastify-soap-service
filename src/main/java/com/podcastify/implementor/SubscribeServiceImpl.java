@@ -12,6 +12,8 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 
 @WebService(targetNamespace = "http://com.podcastify.service/", endpointInterface = "com.podcastify.service.SubscribeService")
 public class SubscribeServiceImpl implements SubscribeService {
@@ -21,6 +23,10 @@ public class SubscribeServiceImpl implements SubscribeService {
 
    @Override
    public ResponseModel subscribe(int subscriberID, int creatorID) {
+      if (subscriberID <= 0 || creatorID <= 0) {
+         throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
+      }
+
       String description = "Subscriber ID: " + subscriberID + " is subscribing to creator ID: " + creatorID;
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
@@ -50,6 +56,11 @@ public class SubscribeServiceImpl implements SubscribeService {
 
    @Override
    public ResponseModel updateStatus(int subscriberID, int creatorID, String status) {
+      if (subscriberID <= 0 || creatorID <= 0) {
+         throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
+      }
+
+      String sanitizedStatus = Jsoup.clean(status, Safelist.none());
       String description = "Updated status of Subscriber ID: " + subscriberID + " with creator ID: " + creatorID;
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
@@ -61,7 +72,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             SubscriberModel sm = new SubscriberModel();
             sm.setCreatorID(creatorID);
             sm.setSubscriberID(subscriberID);
-            sm.setStatus(status);
+            sm.setStatus(sanitizedStatus);
             sr.updateSubscriptionStatus(sm);
 
             return Response.createResponse(Response.HTTP_STATUS_OK, "success");
@@ -78,6 +89,10 @@ public class SubscribeServiceImpl implements SubscribeService {
 
    @Override
    public ResponseModel getStatus(int subscriberID, int creatorID) {
+      if (subscriberID <= 0 || creatorID <= 0) {
+         throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
+      }
+
       String description = "Fetched status of Subscriber ID: " + subscriberID + " with creator ID: " + creatorID;
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
