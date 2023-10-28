@@ -4,6 +4,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+
 public class Database {
     private Connection conn;
     private String MYSQL_USER;
@@ -33,9 +35,10 @@ public class Database {
             this.conn.setAutoCommit(false);
             System.out.println("Connection to database successfully established...");
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Please check your env files!");
-            System.exit(1);
+            if (!(e instanceof CommunicationsException)) {
+                System.out.println("Please check your env files!");
+                System.exit(1);
+            }
         }
     }
 
