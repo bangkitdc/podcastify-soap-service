@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class LogMiddleware {
     private LogServiceImpl lsi = new LogServiceImpl();
     private Map<String, String> apiKeysToServices;
+    private String incomingService;
 
     public LogMiddleware(MessageContext mc, String description, String endpoint) throws SecurityException {
         HttpExchange httpExchange = (HttpExchange) mc.get(JAXWSProperties.HTTP_EXCHANGE);
@@ -43,9 +44,16 @@ public class LogMiddleware {
 
     private String getServiceFromApiKey(String apiKey) throws SecurityException {
         String serviceName = apiKeysToServices.get(apiKey);
+        this.incomingService = serviceName;
+
         if (serviceName == null) {
             throw new SecurityException("Invalid API Key!");
         }
+
         return serviceName;
+    }
+
+    public String getServiceName() {
+        return this.incomingService;
     }
 }
