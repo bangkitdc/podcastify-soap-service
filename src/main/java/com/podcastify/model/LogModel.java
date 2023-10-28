@@ -1,17 +1,15 @@
 package com.podcastify.model;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class LogModel {
     private int id;
-    private String description;
-    private String IP;
-    private String endpoint;
-    private Date timestamp;
-    private String fromService;
+    @NonNull private String description;
+    @NonNull private String IP;
+    @NonNull private String endpoint;
+    @NonNull private Timestamp timestamp;
+    @NonNull private String fromService;
 }
