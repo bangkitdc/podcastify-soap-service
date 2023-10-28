@@ -25,6 +25,8 @@ CREATE TABLE subscriptions(
     creator_id      int             NOT NULL,
     subscriber_id   int             NOT NULL,
     status_id       int             NOT NULL DEFAULT 1,
+    created_at      timestamp       NOT NULL DEFAULT NOW(),
+    updated_at      timestamp       NOT NULL DEFAULT NOW(),
     PRIMARY KEY (creator_id, subscriber_id),
     FOREIGN KEY (status_id) REFERENCES statuses(status_id)
 );
