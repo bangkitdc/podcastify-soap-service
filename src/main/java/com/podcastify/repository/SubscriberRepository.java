@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SubscriberRepository extends Repository {
 
@@ -82,6 +84,40 @@ public class SubscriberRepository extends Repository {
         }
 
         return status;
+    }
+
+    public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) throws SQLException {
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT su.subscriber_id subscriber_id, st.name status, su.created_at, su.updated_at ")
+                .append("FROM subscriptions su ")
+                .append("INNER JOIN statuses st ON su.status_id = st.status_id ")
+                .append("WHERE su.creator_id = ?");
+
+        if (!status.equals("ALL")) {
+            query.append(" AND st.name = ?");
+        }
+
+        List<SubscriberModel> subscribers = new ArrayList<>();
+        try (PreparedStatement stmt = this.conn.prepareStatement(query.toString())) {
+            stmt.setInt(1, creatorID);
+            if (!status.equals("ALL")) {
+                stmt.setString(2, status);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SubscriberModel subscriber = new SubscriberModel();
+                subscriber.setSubscriberID(rs.getInt("subscriber_id"));
+                subscriber.setStatus(rs.getString("status"));
+                subscriber.setCreatedAt(rs.getTimestamp("created_at"));
+                subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
+                subscribers.add(subscriber);
+            }
+            this.conn.commit();
+        }
+
+        return subscribers;
     }
 
 }
