@@ -18,7 +18,7 @@ public class SubscriberRepository extends Repository {
         try (PreparedStatement stmt = this.conn.prepareStatement(query)) {
             stmt.setInt(1, sm.getCreatorID());
             stmt.setInt(2, sm.getSubscriberID());
-            stmt.setInt(3, sm.getSubscriberName());
+            stmt.setString(3, sm.getSubscriberName());
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
