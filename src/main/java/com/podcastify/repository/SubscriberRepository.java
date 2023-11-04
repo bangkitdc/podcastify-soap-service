@@ -13,11 +13,12 @@ import java.util.ArrayList;
 public class SubscriberRepository extends Repository {
 
     public void addSubscriber(SubscriberModel sm) throws SQLException {
-        String query = "INSERT INTO subscriptions (creator_id, subscriber_id) VALUES(?, ?)";
+        String query = "INSERT INTO subscriptions (creator_id, subscriber_id, subscriber_name) VALUES(?, ?, ?)";
 
         try (PreparedStatement stmt = this.conn.prepareStatement(query)) {
             stmt.setInt(1, sm.getCreatorID());
             stmt.setInt(2, sm.getSubscriberID());
+            stmt.setInt(3, sm.getSubscriberName());
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
@@ -88,7 +89,7 @@ public class SubscriberRepository extends Repository {
 
     public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) throws SQLException {
         StringBuilder query = new StringBuilder();
-        query.append("SELECT su.subscriber_id subscriber_id, st.name status, su.created_at, su.updated_at ")
+        query.append("SELECT su.subscriber_id subscriber_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
                 .append("FROM subscriptions su ")
                 .append("INNER JOIN statuses st ON su.status_id = st.status_id ")
                 .append("WHERE su.creator_id = ?");
@@ -109,6 +110,7 @@ public class SubscriberRepository extends Repository {
             while (rs.next()) {
                 SubscriberModel subscriber = new SubscriberModel();
                 subscriber.setSubscriberID(rs.getInt("subscriber_id"));
+                subscriber.setSubscriberName(rs.getString("subscriber_name"));
                 subscriber.setStatus(rs.getString("status"));
                 subscriber.setCreatedAt(rs.getTimestamp("created_at"));
                 subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));

@@ -25,10 +25,11 @@ public class SubscribeServiceImpl implements SubscribeService {
    private SubscriberRepository sr;
 
    @Override
-   public ResponseModel subscribe(int subscriberID, int creatorID) {
+   public ResponseModel subscribe(int subscriberID, int creatorID, String subscriberName) {
       if (subscriberID <= 0 || creatorID <= 0) {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
+      String sanitizedSubscriberName = Jsoup.clean(subscriberName, Safelist.none());
 
       String description = "Subscriber ID: " + subscriberID + " is subscribing to creator ID: " + creatorID;
       MessageContext mc = wsContext.getMessageContext();
@@ -41,6 +42,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             SubscriberModel sm = new SubscriberModel();
             sm.setCreatorID(creatorID);
             sm.setSubscriberID(subscriberID);
+            sm.setSubscriberName(sanitizedSubscriberName);
             sr.addSubscriber(sm);
 
             return Response.createResponse(Response.HTTP_STATUS_ACCEPTED, "success");

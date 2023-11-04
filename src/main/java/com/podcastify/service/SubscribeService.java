@@ -14,7 +14,7 @@ import java.util.List;
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public interface SubscribeService {
     @WebMethod
-    ResponseModel subscribe(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID);
+    ResponseModel subscribe(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "subscriber_name") String subscriberName);
 
     @WebMethod
     ResponseModel updateStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "status") String status);
