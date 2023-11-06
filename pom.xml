@@ -33,6 +33,11 @@
         <scope>provided</scope>
     </dependency>
     <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>1.15.3</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat</artifactId>
       <version>7.0.91</version>

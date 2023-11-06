@@ -1,7 +1,9 @@
 package com.podcastify.constant;
 
 import com.podcastify.model.ResponseModel;
-
+import com.podcastify.model.BaseResponseModel;
+import java.util.List;
+import java.util.ArrayList;
 import java.sql.SQLException;
 
 public class Response {
@@ -32,17 +34,51 @@ public class Response {
             return Response.createResponse(Response.HTTP_STATUS_UNAUTHORIZED, e.getMessage());
         if (e instanceof SQLException)
             return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage());
+        if (e instanceof IllegalArgumentException)
+            return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage());
         else {
             String errMessage = e.getMessage() == null ? "internal server error" : e.getMessage();
             return Response.createResponse(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, errMessage);
         }
     }
 
-    public static ResponseModel createResponse(int statusCode, String message, Object data) {
-        ResponseModel response = new ResponseModel();
+    public static BaseResponseModel createResponse(Exception e, Object data) {
+        if (e instanceof SecurityException)
+            return Response.createResponse(Response.HTTP_STATUS_UNAUTHORIZED, e.getMessage(), data);
+        if (e instanceof SQLException)
+            return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage(), data);
+        if (e instanceof IllegalArgumentException)
+            return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage(), data);
+        else {
+            String errMessage = e.getMessage() == null ? "internal server error" : e.getMessage();
+            return Response.createResponse(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, errMessage, data);
+        }
+    }
+
+    public static BaseResponseModel createResponse(int statusCode, String message, Object data) {
+        BaseResponseModel response = new BaseResponseModel();
         response.setStatusCode(statusCode);
         response.setMessage(message);
         response.setData(data);
+        return response;
+    }
+
+    public static <T> List<T> createResponse(Exception e, List<T> data) {
+        if (e instanceof SecurityException)
+            return Response.createResponse(Response.HTTP_STATUS_UNAUTHORIZED, e.getMessage(), data);
+        if (e instanceof SQLException)
+            return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage(), data);
+        if (e instanceof IllegalArgumentException)
+            return Response.createResponse(Response.HTTP_STATUS_BAD_REQUEST, e.getMessage(), data);
+        else {
+            String errMessage = e.getMessage() == null ? "internal server error" : e.getMessage();
+            return Response.createResponse(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, errMessage, data);
+        }
+    }
+
+    public static <T> List<T> createResponse(int statusCode, String message, List<T> data) {
+        List<T> response = new ArrayList<>();
+        response.addAll(data);
         return response;
     }
 }
