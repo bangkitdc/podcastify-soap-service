@@ -87,12 +87,13 @@ public class SubscriberRepository extends Repository {
         return status;
     }
 
-    public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) throws SQLException {
+    public List<SubscriberModel> getSubscriptionBySubscriberID(int subscriberID, String status) throws SQLException {
         StringBuilder query = new StringBuilder();
-        query.append("SELECT su.subscriber_id subscriber_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
+        query.append(
+                "SELECT su.creator_id creator_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at")
                 .append("FROM subscriptions su ")
                 .append("INNER JOIN statuses st ON su.status_id = st.status_id ")
-                .append("WHERE su.creator_id = ?");
+                .append("WHERE su.subscriber_id = ?");
 
         if (!status.equals("ALL")) {
             query.append(" AND st.name = ?");
@@ -100,11 +101,38 @@ public class SubscriberRepository extends Repository {
 
         List<SubscriberModel> subscribers = new ArrayList<>();
         try (PreparedStatement stmt = this.conn.prepareStatement(query.toString())) {
-            stmt.setInt(1, creatorID);
+            stmt.setInt(1, subscriberID);
             if (!status.equals("ALL")) {
                 stmt.setString(2, status);
             }
 
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SubscriberModel subscriber = new SubscriberModel();
+                subscriber.setSubscriberID(subscriberID);
+                subscriber.setCreatorID(rs.getInt("creator_id"));
+                subscriber.setSubscriberName(rs.getString("subscriber_name"));
+                subscriber.setStatus(rs.getString("status"));
+                subscriber.setCreatedAt(rs.getTimestamp("created_at"));
+                subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
+                subscribers.add(subscriber);
+            }
+            this.conn.commit();
+        }
+
+        return subscribers;
+    }
+
+    public List<SubscriberModel> getAllSubscriptions() throws SQLException {
+        StringBuilder query = new StringBuilder();
+        query.append(
+                "SELECT su.subscriber_id subscriber_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at")
+                .append("FROM subscriptions su ")
+                .append("INNER JOIN statuses st ON su.status_id = st.status_id ");
+
+        List<SubscriberModel> subscribers = new ArrayList<>();
+        try (PreparedStatement stmt = this.conn.prepareStatement(query.toString())) {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
