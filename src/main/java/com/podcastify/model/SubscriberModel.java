@@ -1,7 +1,8 @@
 package com.podcastify.model;
 
 import lombok.*;
-import java.sql.Timestamp;
+
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -10,6 +11,6 @@ public class SubscriberModel {
     @NonNull private String subscriberName;
     private int creatorID;
     @NonNull private String status;
-    @NonNull private Timestamp createdAt;
-    @NonNull private Timestamp updatedAt;
+    @NonNull private Date createdAt;
+    @NonNull private Date updatedAt;
 }
