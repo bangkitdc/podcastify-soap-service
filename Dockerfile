@@ -12,6 +12,6 @@ WORKDIR /target
 
 COPY --from=build /app/target .
 
-EXPOSE 9000
+EXPOSE 5555
 
 CMD java -cp podcastify-soap-service-jar-with-dependencies.jar com.podcastify.main.Main

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import lombok.*;
 
 @Data
+@Setter
 @NoArgsConstructor
 public class LogModel {
     private int id;

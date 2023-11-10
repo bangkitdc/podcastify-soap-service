@@ -16,7 +16,7 @@ services:
 
   podcastify-soap-service-app:
     container_name: podcastify-soap-service-app
-    build: .
+    image: podcastify-soap-service-app
     hostname: podcastify-soap-service-app
     env_file:
       - .env
