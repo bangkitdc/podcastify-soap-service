@@ -78,9 +78,6 @@ public class SubscriberRepository extends Repository {
                 }
             }
 
-            if (status == null) {
-                throw new SQLException("No data found for the given subscriber and creator IDs");
-            }
             this.conn.commit();
         }
 
