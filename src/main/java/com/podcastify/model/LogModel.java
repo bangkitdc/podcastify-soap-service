@@ -1,6 +1,7 @@
 package com.podcastify.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
+
 import lombok.*;
 
 @Data
@@ -11,6 +12,6 @@ public class LogModel {
     @NonNull private String description;
     @NonNull private String IP;
     @NonNull private String endpoint;
-    @NonNull private Timestamp timestamp;
+    @NonNull private Date timestamp;
     @NonNull private String fromService;
 }
