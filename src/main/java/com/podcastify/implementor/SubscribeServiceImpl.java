@@ -109,6 +109,9 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setSubscriberID(subscriberID);
 
             String status = sr.getSubscriptionStatus(sm);
+            if (status == null) {
+               return Response.createResponse(Response.HTTP_STATUS_OK, "success", "NOT SUBSCRIBED");
+            }
 
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", status);
          }
