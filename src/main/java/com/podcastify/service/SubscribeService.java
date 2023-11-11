@@ -14,13 +14,13 @@ import java.util.List;
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public interface SubscribeService {
     @WebMethod
-    ResponseModel subscribe(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "subscriber_name") String subscriberName);
+    ResponseModel subscribe(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "subscriber_name") String subscriberName, @WebParam(name = "creator_name") String creatorName);
 
     @WebMethod
-    ResponseModel updateStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "status") String status);
+    ResponseModel updateStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "creator_name") String creatorName, @WebParam(name = "status") String status);
 
     @WebMethod
-    BaseResponseModel getStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID);
+    List<BaseResponseModel> getStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID);
 
     @WebMethod
     List<SubscriberModel> getSubscriptionBySubscriberID(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "status") String status);

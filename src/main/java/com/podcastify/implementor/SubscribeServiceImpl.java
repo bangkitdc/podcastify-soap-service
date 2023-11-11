@@ -8,6 +8,9 @@ import com.podcastify.repository.SubscriberRepository;
 import com.podcastify.model.SubscriberModel;
 import com.podcastify.model.BaseResponseModel;
 import com.podcastify.model.ResponseModel;
+import com.podcastify.utils.Request;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
@@ -15,8 +18,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
-
 import java.util.List;
+import java.util.ArrayList;
 
 @WebService(targetNamespace = "http://com.podcastify.service/", endpointInterface = "com.podcastify.service.SubscribeService")
 public class SubscribeServiceImpl implements SubscribeService {
@@ -25,7 +28,7 @@ public class SubscribeServiceImpl implements SubscribeService {
    private SubscriberRepository sr;
 
    @Override
-   public ResponseModel subscribe(int subscriberID, int creatorID, String subscriberName) {
+   public ResponseModel subscribe(int subscriberID, int creatorID, String subscriberName, String creatorName) {
       if (subscriberID <= 0 || creatorID <= 0) {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
@@ -43,6 +46,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setCreatorID(creatorID);
             sm.setSubscriberID(subscriberID);
             sm.setSubscriberName(sanitizedSubscriberName);
+            sm.setCreatorName(creatorName);
             sr.addSubscriber(sm);
 
             return Response.createResponse(Response.HTTP_STATUS_ACCEPTED, "success");
@@ -58,7 +62,7 @@ public class SubscribeServiceImpl implements SubscribeService {
    }
 
    @Override
-   public ResponseModel updateStatus(int subscriberID, int creatorID, String status) {
+   public ResponseModel updateStatus(int subscriberID, int creatorID, String creatorName, String status) {
       if (subscriberID <= 0 || creatorID <= 0) {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
@@ -78,6 +82,8 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setStatus(sanitizedStatus);
             sr.updateSubscriptionStatus(sm);
 
+            
+
             return Response.createResponse(Response.HTTP_STATUS_OK, "success");
          }
 
@@ -85,13 +91,13 @@ public class SubscribeServiceImpl implements SubscribeService {
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
-
+         e.printStackTrace();
          return Response.createResponse(e);
       }
    }
 
    @Override
-   public BaseResponseModel getStatus(int subscriberID, int creatorID) {
+   public List<BaseResponseModel> getStatus(int subscriberID, int creatorID) {
       if (subscriberID <= 0 || creatorID <= 0) {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
@@ -103,7 +109,7 @@ public class SubscribeServiceImpl implements SubscribeService {
       try {
          LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
 
-         if (loggingMiddleware.getServiceName().equals(ServiceConstants.APP_SERVICE)) {
+         if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
             SubscriberModel sm = new SubscriberModel();
             sm.setCreatorID(creatorID);
             sm.setSubscriberID(subscriberID);
@@ -116,12 +122,12 @@ public class SubscribeServiceImpl implements SubscribeService {
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", status);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new Object());
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", "method not allowed");
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
-         return Response.createResponse(e, new Object());
+         return Response.createResponse(e, "an exception occured");
       }
    }
 
@@ -144,12 +150,12 @@ public class SubscribeServiceImpl implements SubscribeService {
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", null);
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
-         return Response.createResponse(e, null);
+         return Response.createResponse(e, new ArrayList<>());
       }
    }
 
@@ -169,12 +175,12 @@ public class SubscribeServiceImpl implements SubscribeService {
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", null);
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
-         return Response.createResponse(e, null);
+         return Response.createResponse(e, new ArrayList<>());
       }
    }
 }

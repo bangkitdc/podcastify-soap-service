@@ -23,6 +23,7 @@ INSERT INTO statuses(name) VALUES
 
 CREATE TABLE subscriptions(
     creator_id      int             NOT NULL,
+    creator_name    varchar(255)    NOT NULL,
     subscriber_id   int             NOT NULL,
     subscriber_name varchar(255)    NOT NULL,
     status_id       int             NOT NULL DEFAULT 1,

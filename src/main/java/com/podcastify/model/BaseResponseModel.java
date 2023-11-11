@@ -28,5 +28,5 @@ public class BaseResponseModel {
     private int statusCode;
     @XmlElement(required = true)
     private String message;
-    private Object data;
+    private String data;
 }
