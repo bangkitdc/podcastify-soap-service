@@ -1,4 +1,4 @@
-FROM maven:3-openjdk-8 as build
+FROM maven:3-amazoncorretto-8 as build
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN --mount=type=cache,target=/root/.m2 mvn clean install assembly:single
 
-FROM openjdk:8
+FROM amazoncorretto:8
 
 WORKDIR /target
 
