@@ -1,6 +1,7 @@
 package com.podcastify.repository;
 
 import com.podcastify.model.SubscriberModel;
+import com.podcastify.constant.Status;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,12 +14,13 @@ import java.util.ArrayList;
 public class SubscriberRepository extends Repository {
 
     public void addSubscriber(SubscriberModel sm) throws SQLException {
-        String query = "INSERT INTO subscriptions (creator_id, subscriber_id, subscriber_name) VALUES(?, ?, ?)";
+        String query = "INSERT INTO subscriptions (creator_id, subscriber_id, subscriber_name, creator_name) VALUES(?, ?, ?, ?)";
 
         try (PreparedStatement stmt = this.conn.prepareStatement(query)) {
             stmt.setInt(1, sm.getCreatorID());
             stmt.setInt(2, sm.getSubscriberID());
             stmt.setString(3, sm.getSubscriberName());
+            stmt.setString(4, sm.getCreatorName());
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
@@ -44,16 +46,26 @@ public class SubscriberRepository extends Repository {
             }
         }
 
-        query = "UPDATE subscriptions SET status_id = ?, updated_at = ? WHERE creator_id = ? and subscriber_id = ?";
+        // Delete 'REJECTED' subscription to enable subscriber to subscribe again
+        if (statusId == Status.REJECTED) {
+            query = "DELETE FROM subscriptions WHERE creator_id = ? and subscriber_id = ?";
+        } else {
+            query = "UPDATE subscriptions SET status_id = ?, updated_at = ? WHERE creator_id = ? and subscriber_id = ?";
+        }
 
         try (PreparedStatement stmt = this.conn.prepareStatement(query)) {
-            Instant instant = Instant.now();
-            Timestamp currentTimestamp = Timestamp.from(instant);
+            if (statusId == Status.REJECTED) {
+                stmt.setInt(1, sm.getCreatorID());
+                stmt.setInt(2, sm.getSubscriberID());
+            } else {
+                Instant instant = Instant.now();
+                Timestamp currentTimestamp = Timestamp.from(instant);
 
-            stmt.setInt(1, statusId);
-            stmt.setTimestamp(2, currentTimestamp);
-            stmt.setInt(3, sm.getCreatorID());
-            stmt.setInt(4, sm.getSubscriberID());
+                stmt.setInt(1, statusId);
+                stmt.setTimestamp(2, currentTimestamp);
+                stmt.setInt(3, sm.getCreatorID());
+                stmt.setInt(4, sm.getSubscriberID());
+            }
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
@@ -90,7 +102,7 @@ public class SubscriberRepository extends Repository {
     public List<SubscriberModel> getSubscriptionBySubscriberID(int subscriberID, String status) throws SQLException {
         StringBuilder query = new StringBuilder();
         query.append(
-                "SELECT su.creator_id creator_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
+                "SELECT su.creator_id creator_id, su.creator_name creator_name, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
                 .append("FROM subscriptions su ")
                 .append("INNER JOIN statuses st ON su.status_id = st.status_id ")
                 .append("WHERE su.subscriber_id = ?");
@@ -111,8 +123,9 @@ public class SubscriberRepository extends Repository {
             while (rs.next()) {
                 SubscriberModel subscriber = new SubscriberModel();
                 subscriber.setSubscriberID(subscriberID);
-                subscriber.setCreatorID(rs.getInt("creator_id"));
                 subscriber.setSubscriberName(rs.getString("subscriber_name"));
+                subscriber.setCreatorID(rs.getInt("creator_id"));
+                subscriber.setCreatorName(rs.getString("creator_name"));
                 subscriber.setStatus(rs.getString("status"));
                 subscriber.setCreatedAt(rs.getTimestamp("created_at"));
                 subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
@@ -127,7 +140,7 @@ public class SubscriberRepository extends Repository {
     public List<SubscriberModel> getAllSubscriptions() throws SQLException {
         StringBuilder query = new StringBuilder();
         query.append(
-                "SELECT su.creator_id creator_id, su.subscriber_id subscriber_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
+                "SELECT su.creator_id creator_id, su.creator_name creator_name, su.subscriber_id subscriber_id, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
                 .append("FROM subscriptions su ")
                 .append("INNER JOIN statuses st ON su.status_id = st.status_id ");
 
@@ -138,8 +151,9 @@ public class SubscriberRepository extends Repository {
             while (rs.next()) {
                 SubscriberModel subscriber = new SubscriberModel();
                 subscriber.setSubscriberID(rs.getInt("subscriber_id"));
-                subscriber.setCreatorID(rs.getInt("creator_id"));
                 subscriber.setSubscriberName(rs.getString("subscriber_name"));
+                subscriber.setCreatorID(rs.getInt("creator_id"));
+                subscriber.setCreatorName(null);(rs.getString("creator_name"));
                 subscriber.setStatus(rs.getString("status"));
                 subscriber.setCreatedAt(rs.getTimestamp("created_at"));
                 subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
