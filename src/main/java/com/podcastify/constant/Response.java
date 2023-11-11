@@ -42,7 +42,7 @@ public class Response {
         }
     }
 
-    public static BaseResponseModel createResponse(Exception e, Object data) {
+    public static List<BaseResponseModel> createResponse(Exception e, String data) {
         if (e instanceof SecurityException)
             return Response.createResponse(Response.HTTP_STATUS_UNAUTHORIZED, e.getMessage(), data);
         if (e instanceof SQLException)
@@ -55,11 +55,13 @@ public class Response {
         }
     }
 
-    public static BaseResponseModel createResponse(int statusCode, String message, Object data) {
-        BaseResponseModel response = new BaseResponseModel();
-        response.setStatusCode(statusCode);
-        response.setMessage(message);
-        response.setData(data);
+    public static List<BaseResponseModel> createResponse(int statusCode, String message, String data) {
+        BaseResponseModel baseResponse = new BaseResponseModel();
+        baseResponse.setStatusCode(statusCode);
+        baseResponse.setMessage(message);
+        baseResponse.setData(data);
+        List<BaseResponseModel> response = new ArrayList<>();
+        response.add(baseResponse);
         return response;
     }
 
