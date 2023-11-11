@@ -20,7 +20,7 @@ public interface SubscribeService {
     ResponseModel updateStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID, @WebParam(name = "creator_name") String creatorName, @WebParam(name = "status") String status);
 
     @WebMethod
-    BaseResponseModel getStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID);
+    List<BaseResponseModel> getStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID);
 
     @WebMethod
     List<SubscriberModel> getSubscriptionBySubscriberID(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "status") String status);
