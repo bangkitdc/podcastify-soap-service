@@ -8,6 +8,9 @@ import com.podcastify.repository.SubscriberRepository;
 import com.podcastify.model.SubscriberModel;
 import com.podcastify.model.BaseResponseModel;
 import com.podcastify.model.ResponseModel;
+import com.podcastify.utils.Request;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
@@ -15,7 +18,6 @@ import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
-
 import java.util.List;
 
 @WebService(targetNamespace = "http://com.podcastify.service/", endpointInterface = "com.podcastify.service.SubscribeService")
@@ -25,7 +27,7 @@ public class SubscribeServiceImpl implements SubscribeService {
    private SubscriberRepository sr;
 
    @Override
-   public ResponseModel subscribe(int subscriberID, int creatorID, String subscriberName) {
+   public ResponseModel subscribe(int subscriberID, int creatorID, String subscriberName, String creatorName) {
       if (subscriberID <= 0 || creatorID <= 0) {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
@@ -43,6 +45,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setCreatorID(creatorID);
             sm.setSubscriberID(subscriberID);
             sm.setSubscriberName(sanitizedSubscriberName);
+            sm.setCreatorName(creatorName);
             sr.addSubscriber(sm);
 
             return Response.createResponse(Response.HTTP_STATUS_ACCEPTED, "success");
@@ -58,7 +61,7 @@ public class SubscribeServiceImpl implements SubscribeService {
    }
 
    @Override
-   public ResponseModel updateStatus(int subscriberID, int creatorID, String status) {
+   public ResponseModel updateStatus(int subscriberID, int creatorID, String creatorName, String status) {
       if (subscriberID <= 0 || creatorID <= 0) {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
@@ -78,6 +81,30 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setStatus(sanitizedStatus);
             sr.updateSubscriptionStatus(sm);
 
+            // Dotenv dotenv = Dotenv.load();
+            // String url = dotenv.get("APP_URL") + "/subscription";
+            // Request request = new Request(url);
+            // System.out.println("APP URL: " + url);
+            
+            // // Create a new Request object
+
+            // // Set the HTTP method to POST
+            // request.setMethod("POST");
+
+            // // Add parameters
+            // // Add body
+            // request.addParam("subscriber_id", subscriberID);
+            // request.addParam("creator_id", creatorID);
+            // request.addParam("creator_name", creatorName);
+            // request.addParam("status", status);
+
+            // // Add headers
+            // request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // // Send the request and print the response
+            // String response = request.send();
+            // System.out.println("Response: " + response);
+
             return Response.createResponse(Response.HTTP_STATUS_OK, "success");
          }
 
@@ -85,7 +112,7 @@ public class SubscribeServiceImpl implements SubscribeService {
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
-
+         e.printStackTrace();
          return Response.createResponse(e);
       }
    }
@@ -109,6 +136,9 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setSubscriberID(subscriberID);
 
             String status = sr.getSubscriptionStatus(sm);
+            if (status == null) {
+               return Response.createResponse(Response.HTTP_STATUS_ACCEPTED, "success", "NOT SUBSCRIBED");
+            }
 
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", status);
          }

@@ -90,9 +90,6 @@ public class SubscriberRepository extends Repository {
                 }
             }
 
-            if (status == null) {
-                throw new SQLException("No data found for the given subscriber and creator IDs");
-            }
             this.conn.commit();
         }
 
@@ -153,7 +150,7 @@ public class SubscriberRepository extends Repository {
                 subscriber.setSubscriberID(rs.getInt("subscriber_id"));
                 subscriber.setSubscriberName(rs.getString("subscriber_name"));
                 subscriber.setCreatorID(rs.getInt("creator_id"));
-                subscriber.setCreatorName(null);(rs.getString("creator_name"));
+                subscriber.setCreatorName(rs.getString("creator_name"));
                 subscriber.setStatus(rs.getString("status"));
                 subscriber.setCreatedAt(rs.getTimestamp("created_at"));
                 subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
