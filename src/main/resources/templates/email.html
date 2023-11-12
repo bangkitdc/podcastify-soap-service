@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Podcastify</title>
+  <style>
+    body {
+      font-family: 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol !important;
+      background-color: #ecf0f1;
+      text-align: center;
+    }
+
+    a {
+      color: #2980b9;
+    }
+
+    .card {
+      background-color: white;
+      display: inline-block;
+      text-align: left;
+      padding: 30px 20px;
+      border-radius: 10px;
+    }
+
+    .wrapper {
+      width: 99%;
+    }
+
+    .text {
+      font-size: 15px;
+      line-height: 25px;
+    }
+
+    .text.--sm {
+      font-size: 12px;
+      line-height: 22px;
+    }
+
+    .button {
+      display: inline-block;
+      font-size: 15px;
+      line-height: 15px;
+      background-color: #2980b9;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+    }
+  </style>
+  <style media="screen and (min-width:480px)">
+    .wrapper {
+      width: 800px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper" style="text-align: center;display: inline-block;color: #313131;">
+    <div style="padding-bottom: 30px;padding-top: 30px;text-align: center;font-weight: bold;font-size: 20px;line-height: 25px;">Podcastify</div>
+    <div style="padding-bottom: 30px">
+      <div class="card">
+        <div class="text" style="padding-bottom: 20px;font-weight: bold;">Dear Admin,</div>
+
+        <div class="text" style="padding-bottom: 20px;">We are excited to inform you that a new subscription request has been received. Here are the details:</div>
+
+        <div class="text" style="padding-bottom: 10px;"><b>From: </b>{{.From}}</div>
+        <div class="text" style="padding-bottom: 40px;"><b>To: </b>{{.To}}</div>
+
+        <div style="text-align: center;padding-bottom: 40px;">
+          <a href="{{.Action}}">
+            <div class="button">Check the details</div>
+          </a>
+        </div>
+
+        <div class="text" style="padding-bottom: 20px">Regards,<br>Podcastify</div>
+
+        <div class="text --sm" style="font-style: italic">This message is an automated message and cannot receive a reply.</div>
+      </div>
+    </div>
+    <div>
+      <div style="padding-bottom: 30px;text-align: center;font-size: 12px;line-height: 25px;">©Podcastify. All rights reserved.</div>
+    </div>
+  </div>
+</body>
+
+</html>

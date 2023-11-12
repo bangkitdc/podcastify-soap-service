@@ -8,14 +8,14 @@ import com.podcastify.repository.SubscriberRepository;
 import com.podcastify.model.SubscriberModel;
 import com.podcastify.model.BaseResponseModel;
 import com.podcastify.model.ResponseModel;
-import com.podcastify.utils.Request;
-
 import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
+
+import com.podcastify.utils.EmailGenerator;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import java.util.List;
@@ -48,6 +48,16 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setSubscriberName(sanitizedSubscriberName);
             sm.setCreatorName(creatorName);
             sr.addSubscriber(sm);
+
+            // Send email to REST Admin
+            Dotenv dotenv = Dotenv.load();
+            String receiver = dotenv.get("RECEIVER_EMAIL");
+
+            EmailServiceImpl emailServiceImpl = new EmailServiceImpl();
+
+            String emailContent = EmailGenerator.generateEmail(sanitizedSubscriberName, creatorName, "http://localhost:5173/");
+
+            emailServiceImpl.sendEmail(receiver, "Podcastify - [New Subscription]", emailContent);
 
             return Response.createResponse(Response.HTTP_STATUS_ACCEPTED, "success");
          }
