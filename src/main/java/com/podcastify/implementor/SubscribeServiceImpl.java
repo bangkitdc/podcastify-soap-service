@@ -92,7 +92,24 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setStatus(sanitizedStatus);
             sr.updateSubscriptionStatus(sm);
 
+            Dotenv dotenv = Dotenv.load();
+            String url = dotenv.get("APP_URL") + "/subscription";
+            Request request = new Request(url);
+
+            // Set the HTTP method to POST
+            request.setMethod("POST");
+
+            // Add parameters
+            request.addParam("subscriber_id", subscriberID);
+            request.addParam("creator_id", creatorID);
+            request.addParam("creator_name", creatorName);
+            request.addParam("status", status);
+
+            // Add headers
+            request.addHeader("Content-Type", "application/x-www-form-urlencoded");
             
+            // Send request
+            String response = request.send();
 
             return Response.createResponse(Response.HTTP_STATUS_OK, "success");
          }
