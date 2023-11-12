@@ -6,6 +6,12 @@ services:
     hostname: podcastify-soap-service-db
     ports:
       - "3308:3306"
+    restart: always
+    healthcheck:
+      test: mysqladmin ping -h podcastify-soap-service-db -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      interval: 5s
+      timeout: 5s
+      retries: 20
     networks:
       - podcastify-soap
     env_file:
@@ -23,7 +29,8 @@ services:
     ports:
       - "5555:5555"
     depends_on:
-      - podcastify-soap-service-db
+      podcastify-soap-service-db:
+        condition: service_healthy
     volumes:
       - ./src:/app/src
     networks:
