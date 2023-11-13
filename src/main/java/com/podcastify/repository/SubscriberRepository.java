@@ -159,7 +159,6 @@ public class SubscriberRepository extends Repository {
                 SubscriberModel subscriber = new SubscriberModel();
                 subscriber.setCreatorID(creatorID);
                 subscriber.setSubscriberName(rs.getString("subscriber_name"));
-                subscriber.setSubscriberID(rs.getInt("subscriber_id"));
                 subscriber.setCreatorName(rs.getString("creator_name"));
                 subscriber.setStatus(rs.getString("status"));
                 subscriber.setCreatedAt(rs.getTimestamp("created_at"));
