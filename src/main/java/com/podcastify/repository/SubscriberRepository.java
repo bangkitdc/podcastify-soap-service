@@ -134,6 +134,44 @@ public class SubscriberRepository extends Repository {
         return subscribers;
     }
 
+    public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) throws SQLException {
+        StringBuilder query = new StringBuilder();
+        query.append(
+                "SELECT su.creator_id creator_id, su.creator_name creator_name, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
+                .append("FROM subscriptions su ")
+                .append("INNER JOIN statuses st ON su.status_id = st.status_id ")
+                .append("WHERE su.creator_id = ?");
+
+        if (!status.equals("ALL")) {
+            query.append(" AND st.name = ?");
+        }
+
+        List<SubscriberModel> subscribers = new ArrayList<>();
+        try (PreparedStatement stmt = this.conn.prepareStatement(query.toString())) {
+            stmt.setInt(1, creatorID);
+            if (!status.equals("ALL")) {
+                stmt.setString(2, status);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SubscriberModel subscriber = new SubscriberModel();
+                subscriber.setCreatorID(creatorID);
+                subscriber.setSubscriberName(rs.getString("subscriber_name"));
+                subscriber.setSubscriberID(rs.getInt("subscriber_id"));
+                subscriber.setCreatorName(rs.getString("creator_name"));
+                subscriber.setStatus(rs.getString("status"));
+                subscriber.setCreatedAt(rs.getTimestamp("created_at"));
+                subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
+                subscribers.add(subscriber);
+            }
+            this.conn.commit();
+        }
+
+        return subscribers;
+    }
+
     public List<SubscriberModel> getAllSubscriptions() throws SQLException {
         StringBuilder query = new StringBuilder();
         query.append(
