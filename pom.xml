@@ -213,6 +213,12 @@
             </includes>
             <targetPath>${project.build.outputDirectory}</targetPath>
         </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.html</include>
+            </includes>
+        </resource>
     </resources>
     <finalName>podcastify-soap-service</finalName>
   </build>
