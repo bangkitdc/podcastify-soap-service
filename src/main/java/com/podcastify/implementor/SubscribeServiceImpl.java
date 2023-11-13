@@ -10,6 +10,7 @@ import com.podcastify.model.BaseResponseModel;
 import com.podcastify.model.ResponseModel;
 import com.podcastify.utils.Request;
 import com.podcastify.utils.EmailGenerator;
+import com.podcastify.utils.MethodList;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import javax.jws.WebService;
@@ -34,7 +35,11 @@ public class SubscribeServiceImpl implements SubscribeService {
       }
       String sanitizedSubscriberName = Jsoup.clean(subscriberName, Safelist.none());
 
-      String description = "Subscriber ID: " + subscriberID + " is subscribing to creator ID: " + creatorID;
+      String description = "Subscriber ID    : " + subscriberID + "\n" +
+                           "Creator ID       : " + creatorID + "\n" +
+                           "Subscriber Name  : " + sanitizedSubscriberName + "\n" +
+                           "Creator Name     : " + creatorName + "\n" +
+                           "Method           : subscribe";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -59,14 +64,17 @@ public class SubscribeServiceImpl implements SubscribeService {
 
             emailServiceImpl.sendEmail(receiver, "Podcastify - [New Subscription]", emailContent);
 
+            MethodList.printProcessStatus(Response.HTTP_STATUS_ACCEPTED, "/subscription", "subscribe");
             return Response.createResponse(Response.HTTP_STATUS_ACCEPTED, "success");
          }
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "subscribe");
          return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed");
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "subscribe");
          return Response.createResponse(e);
       }
    }
@@ -78,7 +86,11 @@ public class SubscribeServiceImpl implements SubscribeService {
       }
 
       String sanitizedStatus = Jsoup.clean(status, Safelist.none());
-      String description = "Updated status of Subscriber ID: " + subscriberID + " with creator ID: " + creatorID;
+      String description = "Subscriber ID    : " + subscriberID + "\n" +
+                           "Creator ID       : " + creatorID + "\n" +
+                           "Creator Name     : " + creatorName + "\n" +
+                           "Status           : " + status + "\n" +
+                           "Method           : updateStatus";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -107,18 +119,21 @@ public class SubscribeServiceImpl implements SubscribeService {
 
             // Add headers
             request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            
+
             // Send request
             String response = request.send();
 
+            MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "updateStatus");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success");
          }
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "updateStatus");
          return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed");
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
-         e.printStackTrace();
+
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "updateStatus");
          return Response.createResponse(e);
       }
    }
@@ -129,7 +144,9 @@ public class SubscribeServiceImpl implements SubscribeService {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
 
-      String description = "Fetched status of Subscriber ID: " + subscriberID + " with creator ID: " + creatorID;
+      String description = "Subscriber ID    : " + subscriberID + "\n" +
+                           "Creator ID       : " + creatorID + "\n" +
+                           "Method           : getStatus";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -146,14 +163,18 @@ public class SubscribeServiceImpl implements SubscribeService {
                return Response.createResponse(Response.HTTP_STATUS_OK, "success", "NOT_SUBSCRIBED");
             }
 
+            MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getStatus");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", status);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", "method not allowed");
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getStatus");
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
+               "method not allowed");
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getStatus");
          return Response.createResponse(e, "an exception occured");
       }
    }
@@ -164,7 +185,9 @@ public class SubscribeServiceImpl implements SubscribeService {
          throw new IllegalArgumentException("Subscriber ID must be positive integer");
       }
 
-      String description = "Fetched subscriptions of subscriber ID: " + subscriberID;
+      String description = "Subscriber ID    : " + subscriberID + "\n" +
+                           "Status           : " + status + "\n" +
+                           "Method           : getSubscriptionBySubscriberID";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -174,14 +197,18 @@ public class SubscribeServiceImpl implements SubscribeService {
          if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
             List<SubscriberModel> subscribers = sr.getSubscriptionBySubscriberID(subscriberID, status);
 
+            MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getSubscriptionBySubscriberID");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new ArrayList<>());
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getSubscriptionBySubscriberID");
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
+               new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getSubscriptionBySubscriberID");
          return Response.createResponse(e, new ArrayList<>());
       }
    }
@@ -192,7 +219,9 @@ public class SubscribeServiceImpl implements SubscribeService {
          throw new IllegalArgumentException("Creator ID must be positive integer");
       }
 
-      String description = "Fetched subscriptions of creator ID: " + creatorID;
+      String description = "Creator ID       : " + creatorID + "\n" +
+                           "Status           : " + status + "\n" +
+                           "Method           : getSubscriptionByCreatorID";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -202,14 +231,18 @@ public class SubscribeServiceImpl implements SubscribeService {
          if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
             List<SubscriberModel> subscribers = sr.getSubscriptionByCreatorID(creatorID, status);
 
+            MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getSubscriptionByCreatorID");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new ArrayList<>());
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getSubscriptionByCreatorID");
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
+               new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getSubscriptionByCreatorID");
          return Response.createResponse(e, new ArrayList<>());
       }
    }
@@ -217,7 +250,7 @@ public class SubscribeServiceImpl implements SubscribeService {
    @Override
    public List<SubscriberModel> getAllSubscriptions() {
 
-      String description = "Fetched all subscriptions data";
+      String description = "Method           : getAllSubscriptions";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -227,14 +260,18 @@ public class SubscribeServiceImpl implements SubscribeService {
          if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
             List<SubscriberModel> subscribers = sr.getAllSubscriptions();
 
+            MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getAllSubscriptions");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new ArrayList<>());
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getAllSubscriptions");
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
+               new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getAllSubscriptions");
          return Response.createResponse(e, new ArrayList<>());
       }
    }

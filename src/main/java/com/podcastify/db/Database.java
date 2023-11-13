@@ -33,10 +33,9 @@ public class Database {
                     this.MYSQL_HOST, this.MYSQL_PORT, this.MYSQL_DATABASE, this.MYSQL_USER, this.MYSQL_PASSWORD);
             this.conn = DriverManager.getConnection(url);
             this.conn.setAutoCommit(false);
-            System.out.println("Connection to database successfully established...");
         } catch (Exception e) {
             if (!(e instanceof CommunicationsException)) {
-                System.out.println("Please check your env files!");
+                System.out.println("Please check your env files! Exiting...");
                 System.exit(1);
             }
         }
