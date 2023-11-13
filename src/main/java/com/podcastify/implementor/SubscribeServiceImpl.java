@@ -187,6 +187,34 @@ public class SubscribeServiceImpl implements SubscribeService {
    }
 
    @Override
+   public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) {
+      if (creatorID <= 0) {
+         throw new IllegalArgumentException("Creator ID must be positive integer");
+      }
+
+      String description = "Fetched subscriptions of creator ID: " + creatorID;
+      MessageContext mc = wsContext.getMessageContext();
+      this.sr = new SubscriberRepository();
+
+      try {
+         LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
+
+         if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
+            List<SubscriberModel> subscribers = sr.getSubscriptionByCreatorID(creatorID, status);
+
+            return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
+         }
+
+         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed", new ArrayList<>());
+
+      } catch (Exception e) {
+         System.out.println("Exception: " + e.getMessage());
+
+         return Response.createResponse(e, new ArrayList<>());
+      }
+   }
+
+   @Override
    public List<SubscriberModel> getAllSubscriptions() {
 
       String description = "Fetched all subscriptions data";
