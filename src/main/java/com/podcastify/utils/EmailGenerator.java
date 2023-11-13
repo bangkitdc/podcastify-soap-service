@@ -10,7 +10,7 @@ public class EmailGenerator {
 
     ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
     // templateResolver.setPrefix("/classpath:/templates/"); // doesnt work
-    templateResolver.setPrefix("/templates/"); // doesnt work
+    templateResolver.setPrefix("templates/");
     templateResolver.setSuffix(".html");
     templateResolver.setTemplateMode("HTML");
 
