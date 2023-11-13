@@ -8,11 +8,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 public class EmailServiceImpl implements EmailService {
   public void sendEmail(String to, String subject, String body) {
@@ -50,7 +53,20 @@ public class EmailServiceImpl implements EmailService {
 
       // Set the email subject and body
       message.setSubject(subject);
-      message.setText(body);
+      // message.setText(body);
+      
+      // Create the multipart/alternative part
+      Multipart multipart = new MimeMultipart("alternative");
+
+      // Add the HTML part
+      MimeBodyPart htmlPart = new MimeBodyPart();
+      htmlPart.setContent(body, "text/html; charset=utf-8");
+
+      // Add parts to the multipart
+      multipart.addBodyPart(htmlPart);
+
+      // Set the content of the message
+      message.setContent(multipart);
 
       // Send the email
       Transport.send(message);

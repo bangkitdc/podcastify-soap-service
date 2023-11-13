@@ -60,8 +60,7 @@ public class SubscribeServiceImpl implements SubscribeService {
 
             EmailServiceImpl emailServiceImpl = new EmailServiceImpl();
 
-            String emailContent = EmailGenerator.generateEmail(sanitizedSubscriberName, creatorName,
-                  "http://localhost:5173/");
+            String emailContent = EmailGenerator.generateEmail(sanitizedSubscriberName, creatorName);
 
             emailServiceImpl.sendEmail(receiver, "Podcastify - [New Subscription]", emailContent);
 

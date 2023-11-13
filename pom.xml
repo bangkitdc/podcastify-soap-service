@@ -216,7 +216,7 @@
         <resource>
             <directory>src/main/resources</directory>
             <includes>
-                <include>**/*.html</include>
+              <include>**/*.html</include>
             </includes>
         </resource>
     </resources>
