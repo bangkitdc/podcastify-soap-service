@@ -7,7 +7,7 @@ Podcastify SOAP Service is a comprehensive service designed to handle incoming s
 2. <b>Subscription Status Update</b> </br> It provides an updateStatus function to update the subscription status (reject or accept) for the Podcastify REST service. When the status is updated, it sends a request to the Podcastify App (Monolith) to trigger push notifications, informing the user that the status has been updated to either rejected or accepted.
 3. <b>Subscription Data</b> </br> The Podcastify SOAP service provides subscription data to the Podcastify REST service. This includes the types of incoming subscriptions. The Podcastify REST service can retrieve all subscriptions, retrieve subscriptions by creator ID, and specify the status of the subscriptions it wants to retrieve.
 4. <b>Notification Emails</b> </br> For every incoming subscription from the Podcastify App (Monolith), the Podcastify SOAP service sends a notification email to the administrator.
-5. <b>Logging Service</b> </br> The Podcastify SOAP service includes a logging service that saves logs to its own database, providing a record of transactions and events within the Podcastify SOAP service itself.
+5. <b>Logging and Authentication</b> </br> The Podcastify SOAP service includes a logging service that saves logs to its own database, providing a record of transactions and events within the Podcastify SOAP service itself. This service also performs an authentication process by checking the API key of every incoming request.
 
 ## DB Schema
 [Belom]
