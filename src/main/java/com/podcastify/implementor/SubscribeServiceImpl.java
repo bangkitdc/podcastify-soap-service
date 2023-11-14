@@ -180,40 +180,6 @@ public class SubscribeServiceImpl implements SubscribeService {
    }
 
    @Override
-   public List<SubscriberModel> getSubscriptionBySubscriberID(int subscriberID, String status) {
-      if (subscriberID <= 0) {
-         throw new IllegalArgumentException("Subscriber ID must be positive integer");
-      }
-
-      String description = "Subscriber ID    : " + subscriberID + "\n" +
-                           "Status           : " + status + "\n" +
-                           "Method           : getSubscriptionBySubscriberID";
-      MessageContext mc = wsContext.getMessageContext();
-      this.sr = new SubscriberRepository();
-
-      try {
-         LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
-
-         if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
-            List<SubscriberModel> subscribers = sr.getSubscriptionBySubscriberID(subscriberID, status);
-
-            MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getSubscriptionBySubscriberID");
-            return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
-         }
-
-         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getSubscriptionBySubscriberID");
-         return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
-               new ArrayList<>());
-
-      } catch (Exception e) {
-         System.out.println("Exception: " + e.getMessage());
-
-         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getSubscriptionBySubscriberID");
-         return Response.createResponse(e, new ArrayList<>());
-      }
-   }
-
-   @Override
    public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) {
       if (creatorID <= 0) {
          throw new IllegalArgumentException("Creator ID must be positive integer");

@@ -23,9 +23,6 @@ public interface SubscribeService {
     List<BaseResponseModel> getStatus(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "creator_id") int creatorID);
 
     @WebMethod
-    List<SubscriberModel> getSubscriptionBySubscriberID(@WebParam(name = "subscriber_id") int subscriberID, @WebParam(name = "status") String status);
-
-    @WebMethod
     List<SubscriberModel> getSubscriptionByCreatorID(@WebParam(name = "creator_id") int creatorID, @WebParam(name = "status") String status);
     
     @WebMethod
