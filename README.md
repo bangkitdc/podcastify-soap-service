@@ -10,7 +10,7 @@ Podcastify SOAP Service is a comprehensive service designed to handle incoming s
 5. <b>Logging and Authentication</b> </br> The Podcastify SOAP service includes a logging service that saves logs to its own database, providing a record of transactions and events within the Podcastify SOAP service itself. This service also performs an authentication process by checking the API key of every incoming request.
 
 ## DB Schema
-[Belom]
+<img src="readme/soap_erd.png" width=350>
 
 ## API Endpoint
 Please refer here [link postman] to get the full versions of the endpoints.
