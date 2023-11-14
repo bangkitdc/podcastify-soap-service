@@ -5,7 +5,7 @@ Podcastify SOAP Service is a comprehensive service designed to handle incoming s
 ## Functionality
 1. <b>Incoming Subscriptions</b> </br> This service handles incoming subscription requests from the Podcastify App (Monolith).
 2. <b>Subscription Status Update</b> </br> It provides an updateStatus function to update the subscription status (reject or accept) for the Podcastify REST service. When the status is updated, it sends a request to the Podcastify App (Monolith) to trigger push notifications, informing the user that the status has been updated to either rejected or accepted.
-3. <b>Subscription Data</b> </br> The Podcastify SOAP service provides subscription data to the Podcastify REST service. This includes the types of incoming subscriptions. The Podcastify REST service can retrieve all subscriptions, retrieve subscriptions by creator ID, and specify the status of the subscriptions it wants to retrieve.
+3. <b>Subscription Data</b> </br> The Podcastify SOAP service provides subscription data to the Podcastify REST service. This includes the types of incoming subscriptions. The Podcastify REST service can retrieve all subscriptions, retrieve subscriptions by creator ID or subscriber ID, and specify the status of the subscriptions it wants to retrieve.
 4. <b>Notification Emails</b> </br> For every incoming subscription from the Podcastify App (Monolith), the Podcastify SOAP service sends a notification email to the administrator.
 5. <b>Logging and Authentication</b> </br> The Podcastify SOAP service includes a logging service that saves logs to its own database, providing a record of transactions and events within the Podcastify SOAP service itself. This service also performs an authentication process by checking the API key of every incoming request.
 
@@ -26,6 +26,7 @@ Please refer here [link postman] to get the full versions of the endpoints.
 | subscribe | subscriber_id, creator_id, subscriber_name, creator_name | Sends a subscription request to a specific creator | Monolith |
 | updateStatus | subscriber_id, creator_id, creator_name, status | Updates the status of a subscription request for a specific subscriber_id and creator_id | REST |
 | getStatus | subscriber_id, creator_id | Retrieves the status for a specific subscriber_id and creator_id | REST |
+| getSubscriptionBySubscriberID | subscriber_id, status | Retrieves subscription data by subscriber ID with a specified status | REST |
 | getSubscriptionByCreatorID | creator_id, status | Retrieves subscription data by creator ID with a specified status | REST |
 | getAllSubscriptions | - | Retrieves all subscription data | REST |
 
