@@ -5,6 +5,7 @@ import com.podcastify.db.Database;
 import com.github.javafaker.Faker;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,28 +23,37 @@ public class Seed {
         Faker faker = new Faker();
         Set<String> existingSubscriptions = new HashSet<>();
 
+        String checkQuery = "SELECT COUNT(*) FROM subscriptions";
         String insertQuery = "INSERT INTO subscriptions (creator_id, creator_name, subscriber_id, subscriber_name, status_id) VALUES (?, ?, ?, ?, ?)";
 
         System.out.println("Seeding subscriptions table...");
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(insertQuery);
+            PreparedStatement statement = conn.prepareStatement(checkQuery);
+            ResultSet resultSet = statement.executeQuery(checkQuery);
 
-            for (int j = 1; j <= 10; j++) {
-                String subscriptionKey = j + "-" + 1;
-                if (!existingSubscriptions.contains(subscriptionKey)) {
-                    preparedStatement.setInt(1, j);
-                    preparedStatement.setString(2, faker.name().fullName());
-                    preparedStatement.setInt(3, 2);
-                    preparedStatement.setString(4, "user");
-                    preparedStatement.setInt(5, faker.number().numberBetween(1, 3));
-                    preparedStatement.executeUpdate();
+            // Only seed if the db is not empty
+            if (resultSet.next() && resultSet.getInt(1) == 0) {
+                PreparedStatement preparedStatement = conn.prepareStatement(insertQuery);
 
-                    existingSubscriptions.add(subscriptionKey);
+                for (int j = 1; j <= 10; j++) {
+                    String subscriptionKey = j + "-" + 1;
+                    if (!existingSubscriptions.contains(subscriptionKey)) {
+                        preparedStatement.setInt(1, j);
+                        preparedStatement.setString(2, faker.name().fullName());
+                        preparedStatement.setInt(3, 2);
+                        preparedStatement.setString(4, "user");
+                        preparedStatement.setInt(5, faker.number().numberBetween(1, 3));
+                        preparedStatement.executeUpdate();
+
+                        existingSubscriptions.add(subscriptionKey);
+                    }
                 }
+
+                this.conn.commit();
+                System.out.println("Seeding completed successfully.");
+            } else {
+                System.out.println("Database is not empty, skipping seeding...");
             }
-            
-            this.conn.commit();
-            System.out.println("Seeding completed successfully.");
         } catch (SQLException e) {
             System.out.println("Error seeding data: " + e.getMessage());
         }
