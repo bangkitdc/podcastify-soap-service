@@ -28,21 +28,20 @@ public class Seed {
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(insertQuery);
 
-            for (int i = 1; i <= 10; i++) {
-                for (int j = 1; j <= 10; j++) {
-                    String subscriptionKey = i + "-" + j;
-                    if (!existingSubscriptions.contains(subscriptionKey)) {
-                        preparedStatement.setInt(1, i);
-                        preparedStatement.setString(2, faker.name().fullName());
-                        preparedStatement.setInt(3, j);
-                        preparedStatement.setString(4, faker.name().fullName());
-                        preparedStatement.setInt(5, faker.number().numberBetween(1, 4));
-                        preparedStatement.executeUpdate();
+            for (int j = 1; j <= 10; j++) {
+                String subscriptionKey = j + "-" + 1;
+                if (!existingSubscriptions.contains(subscriptionKey)) {
+                    preparedStatement.setInt(1, j);
+                    preparedStatement.setString(2, faker.name().fullName());
+                    preparedStatement.setInt(3, 2);
+                    preparedStatement.setString(4, "user");
+                    preparedStatement.setInt(5, faker.number().numberBetween(1, 3));
+                    preparedStatement.executeUpdate();
 
-                        existingSubscriptions.add(subscriptionKey);
-                    }
+                    existingSubscriptions.add(subscriptionKey);
                 }
             }
+            
             this.conn.commit();
             System.out.println("Seeding completed successfully.");
         } catch (SQLException e) {
