@@ -34,12 +34,16 @@ public class SubscribeServiceImpl implements SubscribeService {
          throw new IllegalArgumentException("Subscriber ID and Creator ID must be positive integers");
       }
       String sanitizedSubscriberName = Jsoup.clean(subscriberName, Safelist.none());
+      String sanitizedCreatorName = Jsoup.clean(creatorName, Safelist.none());
+      if (sanitizedSubscriberName.length() <= 0 || sanitizedCreatorName.length() <= 0) {
+         throw new IllegalArgumentException("Name must not be empty");
+      }
 
       String description = "Subscriber ID    : " + subscriberID + "\n" +
-                           "Creator ID       : " + creatorID + "\n" +
-                           "Subscriber Name  : " + sanitizedSubscriberName + "\n" +
-                           "Creator Name     : " + creatorName + "\n" +
-                           "Method           : subscribe";
+            "Creator ID       : " + creatorID + "\n" +
+            "Subscriber Name  : " + sanitizedSubscriberName + "\n" +
+            "Creator Name     : " + sanitizedCreatorName + "\n" +
+            "Method           : subscribe";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -51,7 +55,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             sm.setCreatorID(creatorID);
             sm.setSubscriberID(subscriberID);
             sm.setSubscriberName(sanitizedSubscriberName);
-            sm.setCreatorName(creatorName);
+            sm.setCreatorName(sanitizedCreatorName);
             sr.addSubscriber(sm);
 
             // Send email to REST Admin
@@ -60,7 +64,7 @@ public class SubscribeServiceImpl implements SubscribeService {
 
             EmailServiceImpl emailServiceImpl = new EmailServiceImpl();
 
-            String emailContent = EmailGenerator.generateEmail(sanitizedSubscriberName, creatorName);
+            String emailContent = EmailGenerator.generateEmail(sanitizedSubscriberName, sanitizedCreatorName);
 
             emailServiceImpl.sendEmail(receiver, "Podcastify - [New Subscription]", emailContent);
 
@@ -86,11 +90,19 @@ public class SubscribeServiceImpl implements SubscribeService {
       }
 
       String sanitizedStatus = Jsoup.clean(status, Safelist.none());
+      String sanitizedCreatorName = Jsoup.clean(creatorName, Safelist.none());
+      if (sanitizedStatus.length() <= 0) {
+         throw new IllegalArgumentException("Status must not be empty");
+      }
+      if (sanitizedCreatorName.length() <= 0) {
+         throw new IllegalArgumentException("Creator name must not be empty");
+      }
+
       String description = "Subscriber ID    : " + subscriberID + "\n" +
-                           "Creator ID       : " + creatorID + "\n" +
-                           "Creator Name     : " + creatorName + "\n" +
-                           "Status           : " + status + "\n" +
-                           "Method           : updateStatus";
+            "Creator ID       : " + creatorID + "\n" +
+            "Creator Name     : " + sanitizedCreatorName + "\n" +
+            "Status           : " + status + "\n" +
+            "Method           : updateStatus";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -114,7 +126,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             // Add parameters
             request.addParam("subscriber_id", subscriberID);
             request.addParam("creator_id", creatorID);
-            request.addParam("creator_name", creatorName);
+            request.addParam("creator_name", sanitizedCreatorName);
             request.addParam("status", status);
 
             // Add headers
@@ -145,8 +157,8 @@ public class SubscribeServiceImpl implements SubscribeService {
       }
 
       String description = "Subscriber ID    : " + subscriberID + "\n" +
-                           "Creator ID       : " + creatorID + "\n" +
-                           "Method           : getStatus";
+            "Creator ID       : " + creatorID + "\n" +
+            "Method           : getStatus";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -185,9 +197,14 @@ public class SubscribeServiceImpl implements SubscribeService {
          throw new IllegalArgumentException("Subscriber ID must be positive integer");
       }
 
+      String sanitizedStatus = Jsoup.clean(status, Safelist.none());
+      if (sanitizedStatus.length() <= 0) {
+         throw new IllegalArgumentException("Status must not be empty");
+      }
+
       String description = "Subscriber ID    : " + subscriberID + "\n" +
-                           "Status           : " + status + "\n" +
-                           "Method           : getSubscriptionBySubscriberID";
+            "Status           : " + sanitizedStatus + "\n" +
+            "Method           : getSubscriptionBySubscriberID";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -195,20 +212,22 @@ public class SubscribeServiceImpl implements SubscribeService {
          LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
 
          if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
-            List<SubscriberModel> subscribers = sr.getSubscriptionBySubscriberID(subscriberID, status);
+            List<SubscriberModel> subscribers = sr.getSubscriptionBySubscriberID(subscriberID, sanitizedStatus);
 
             MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getSubscriptionBySubscriberID");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getSubscriptionBySubscriberID");
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription",
+               "getSubscriptionBySubscriberID");
          return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
                new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
-         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getSubscriptionBySubscriberID");
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription",
+               "getSubscriptionBySubscriberID");
          return Response.createResponse(e, new ArrayList<>());
       }
    }
@@ -219,9 +238,14 @@ public class SubscribeServiceImpl implements SubscribeService {
          throw new IllegalArgumentException("Creator ID must be positive integer");
       }
 
+      String sanitizedStatus = Jsoup.clean(status, Safelist.none());
+      if (sanitizedStatus.length() <= 0) {
+         throw new IllegalArgumentException("Status must not be empty");
+      }
+
       String description = "Creator ID       : " + creatorID + "\n" +
-                           "Status           : " + status + "\n" +
-                           "Method           : getSubscriptionByCreatorID";
+            "Status           : " + sanitizedStatus + "\n" +
+            "Method           : getSubscriptionByCreatorID";
       MessageContext mc = wsContext.getMessageContext();
       this.sr = new SubscriberRepository();
 
@@ -229,20 +253,22 @@ public class SubscribeServiceImpl implements SubscribeService {
          LogMiddleware loggingMiddleware = new LogMiddleware(mc, description, "/subscription");
 
          if (loggingMiddleware.getServiceName().equals(ServiceConstants.REST_SERVICE)) {
-            List<SubscriberModel> subscribers = sr.getSubscriptionByCreatorID(creatorID, status);
+            List<SubscriberModel> subscribers = sr.getSubscriptionByCreatorID(creatorID, sanitizedStatus);
 
             MethodList.printProcessStatus(Response.HTTP_STATUS_OK, "/subscription", "getSubscriptionByCreatorID");
             return Response.createResponse(Response.HTTP_STATUS_OK, "success", subscribers);
          }
 
-         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription", "getSubscriptionByCreatorID");
+         MethodList.printProcessStatus(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "/subscription",
+               "getSubscriptionByCreatorID");
          return Response.createResponse(Response.HTTP_STATUS_METHOD_NOT_ALLOWED, "method not allowed",
                new ArrayList<>());
 
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
-         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getSubscriptionByCreatorID");
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription",
+               "getSubscriptionByCreatorID");
          return Response.createResponse(e, new ArrayList<>());
       }
    }
@@ -271,7 +297,8 @@ public class SubscribeServiceImpl implements SubscribeService {
       } catch (Exception e) {
          System.out.println("Exception: " + e.getMessage());
 
-         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription", "getAllSubscriptions");
+         MethodList.printProcessStatus(Response.HTTP_STATUS_INTERNAL_SERVER_ERROR, "/subscription",
+               "getAllSubscriptions");
          return Response.createResponse(e, new ArrayList<>());
       }
    }

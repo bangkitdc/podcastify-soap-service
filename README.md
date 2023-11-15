@@ -63,5 +63,8 @@ Please refer here [link postman] to get the full versions of the endpoints.
 |                                     |                                             | Logging                    |
 |                                     |                                             | Authentication             |
 
+## OWASP
+[OWASP Details](OWASP.md)
+
 ## Copyright
 2023 © Podcastify. All Rights Reserved.
