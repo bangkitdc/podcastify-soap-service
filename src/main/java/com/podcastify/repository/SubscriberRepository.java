@@ -137,7 +137,7 @@ public class SubscriberRepository extends Repository {
     public List<SubscriberModel> getSubscriptionByCreatorID(int creatorID, String status) throws SQLException {
         StringBuilder query = new StringBuilder();
         query.append(
-                "SELECT su.creator_id creator_id, su.creator_name creator_name, su.subscriber_name subscriber_name, st.name status, su.created_at, su.updated_at ")
+                "SELECT su.creator_id creator_id, su.creator_name creator_name, su.subscriber_name subscriber_name, su.subscriber_id subscriber_id, st.name status, su.created_at, su.updated_at ")
                 .append("FROM subscriptions su ")
                 .append("INNER JOIN statuses st ON su.status_id = st.status_id ")
                 .append("WHERE su.creator_id = ?");
@@ -163,6 +163,7 @@ public class SubscriberRepository extends Repository {
                 subscriber.setStatus(rs.getString("status"));
                 subscriber.setCreatedAt(rs.getTimestamp("created_at"));
                 subscriber.setUpdatedAt(rs.getTimestamp("updated_at"));
+                subscriber.setSubscriberID(rs.getInt("subscriber_id"));
                 subscribers.add(subscriber);
             }
             this.conn.commit();
