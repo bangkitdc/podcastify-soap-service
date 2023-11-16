@@ -13,8 +13,6 @@ Podcastify SOAP Service is a comprehensive service designed to handle incoming s
 <img src="readme/soap_erd.png" width=350>
 
 ## API Endpoint
-Please refer here [link postman] to get the full versions of the endpoints.
-
 ### Subscription
 |Method| URL | Explanation | Consumer |
 |:--:|:--|:--|:--:|
